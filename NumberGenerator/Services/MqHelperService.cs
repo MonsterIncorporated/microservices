@@ -1,7 +1,7 @@
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json.Nodes;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 namespace NumberGenerator.Services;
 
 public class MqHelperService(ILogger<MqHelperService> logger)
@@ -23,7 +23,7 @@ public class MqHelperService(ILogger<MqHelperService> logger)
     {
         logger.LogInformation("{id}: Starting RabbitMQ service and connecting to queue: {queueName} at {hostname}", id, queueName, hostname);
         var factory = new ConnectionFactory
-        { 
+        {
             HostName = hostname, 
             UserName = username, 
             Password = password 
@@ -33,7 +33,16 @@ public class MqHelperService(ILogger<MqHelperService> logger)
         channel = await connection.CreateChannelAsync();
         consumer = new AsyncEventingBasicConsumer(channel);
 
+        await channel.QueueDeclareAsync(queue: queueName,
+            durable: true, exclusive: false,
+            autoDelete: false,
+            arguments: new Dictionary<string, object?> { { "x-queue-type", "quorum" } });
+        
+        await channel.ExchangeDeclareAsync("events", ExchangeType.Direct, durable: true);
+        await channel.QueueBindAsync(queue: queueName, exchange: "events", routingKey: "token.purchased");
+
         await channel.BasicConsumeAsync(queueName, false, consumer);
+        
 
         logger.LogInformation("{id}: RabbitMQ service started and consuming from queue: {queueName}", id, queueName);
         return consumer;

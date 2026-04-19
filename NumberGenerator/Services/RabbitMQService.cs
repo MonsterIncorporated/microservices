@@ -1,7 +1,7 @@
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json.Nodes;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 namespace NumberGenerator.Services;
 
 public class RabbitMqService(NumberService numberService, ILogger<RabbitMqService> logger, MqHelperService mqHelperService) : IHostedService
@@ -9,7 +9,7 @@ public class RabbitMqService(NumberService numberService, ILogger<RabbitMqServic
     private AsyncEventingBasicConsumer? consumer;
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        consumer = await mqHelperService.StartAsync("test","localhost","admin","password");
+        consumer = await mqHelperService.StartAsync("numbergenerator","localhost","admin","password");
 
         consumer.ReceivedAsync += async (ch, ea) => await HandleMessage(ch,ea);
     }
@@ -31,7 +31,7 @@ public class RabbitMqService(NumberService numberService, ILogger<RabbitMqServic
 
             if (header == null)
             {
-                logger.LogError("Message without headers.");
+                logger.LogError("Message without headers");
                 await mqHelperService.RejectMessageAsync(eventArgs.DeliveryTag, false);
                 return;
             }
@@ -41,16 +41,27 @@ public class RabbitMqService(NumberService numberService, ILogger<RabbitMqServic
 
             if (type != null && id != null)
             {
-                logger.LogInformation("Processing message transactionId: {transactionId}", id);
+                logger.LogInformation("tId_{id}: Processing message", id);
                 var result = await TypeToService(type, message, id);
 
                 if (result)
                 {
                     await mqHelperService.AcknowledgeMessageAsync(eventArgs.DeliveryTag);
+
+                    var properties = new BasicProperties
+                    {
+                        ContentType = "application/json",
+                        DeliveryMode = DeliveryModes.Persistent
+                    };
+                    var successMessage = new JsonObject{
+                        ["transactionId"] = id
+                    };
+
+                    await mqHelperService.PublishSuccessAsync(successMessage, "/numbergenerator", properties);
                 }
                 else
                 {
-                    await mqHelperService.RejectMessageAsync(eventArgs.DeliveryTag, true);
+                    await mqHelperService.RejectMessageAsync(eventArgs.DeliveryTag, false);
                 }
             }
             else
@@ -70,13 +81,14 @@ public class RabbitMqService(NumberService numberService, ILogger<RabbitMqServic
     */
     private async Task<bool> TypeToService(string type, string message, string id)
     {
+        logger.LogInformation("tId_{id}: Operation of type: {type} is being processed", id, type);
         switch (type)
         {
             case "get":
                 numberService.GetNumber();
                 return true;
             default:
-                Console.WriteLine($"Unknown message type: {type}");
+                logger.LogError("tId_{id}: Unknown message type: {type}", id, type);
 
                 var properties = new BasicProperties
                 {
@@ -85,8 +97,6 @@ public class RabbitMqService(NumberService numberService, ILogger<RabbitMqServic
                 };
 
                 var errorMessage = new JsonObject{
-                    ["code"] = "404",
-                    ["title"] = "unknown type",
                     ["description"] = $"Unknown message type: {type}",
                     ["transactionId"] = id
                 };
