@@ -4,13 +4,22 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 namespace NumberGenerator.Services;
 
-public class RabbitMqService(NumberService numberService, ILogger<RabbitMqService> logger, MqHelperService mqHelperService) : IHostedService
+public class RabbitMqService(NumberService numberService, ILogger<RabbitMqService> logger, MqHelperService mqHelperService, IConfiguration configuration) : IHostedService
 {
     private AsyncEventingBasicConsumer? consumer;
     public async Task StartAsync(CancellationToken cancellationToken)
-    {
-        consumer = await mqHelperService.StartAsync("numbergenerator","localhost","admin","password");
+    {   
+        var user = configuration.GetValue<string>("RABBIT_USER");
+        var pass = configuration.GetValue<string>("RABBIT_PASS");
+        var host_string = configuration.GetValue<string>("RABBIT_HOSTSTRING");
 
+        if (user == null || pass == null || host_string == null)
+        {
+            logger.LogError("RabbitMQ credentials are not set in environment variables.");
+            return;
+        }
+
+        consumer = await mqHelperService.StartAsync("numbergenerator", host_string, user, pass);
         consumer.ReceivedAsync += async (ch, ea) => await HandleMessage(ch,ea);
     }
 

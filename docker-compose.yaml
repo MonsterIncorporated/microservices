@@ -1,4 +1,12 @@
 services:
+  numbergenerator:
+    build: ./NumberGenerator
+    ports:
+      - "5238:5283"
+    environment:
+      - RABBIT_HOSTSTRING=rabbitmq:5672
+      - RABBIT_USER=${RABBIT_USER}
+      - RABBIT_PASS=${RABBIT_PASS}
   rabbitmq:
     image: "rabbitmq:4-management"
     ports:
