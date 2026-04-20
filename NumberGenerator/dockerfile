@@ -11,7 +11,8 @@ COPY . .
 RUN dotnet publish NumberGenerator.csproj -o /app --no-restore
 
 # final stage/image
-FROM dhi.io/dotnet:10-alpine3.23
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine3.23
 WORKDIR /app
+RUN apk add --no-cache curl
 COPY --from=build /app .
 ENTRYPOINT ["dotnet", "NumberGenerator.dll"]

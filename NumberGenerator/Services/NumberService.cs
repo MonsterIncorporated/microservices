@@ -1,8 +1,8 @@
-public class NumberService
+public class NumberService(ILogger<NumberService> logger)
 {
-    public int GetNumber()
+    public int? GetNumber()
     {
-        Console.WriteLine("GetNumber called");
+        logger.LogInformation("GetNumber called");
         return 67;
     }
 }

@@ -1,17 +1,38 @@
 services:
+  frontend:
+    build: ./Frontend/numbergenerator
+    ports:
+      - "80:80"
   numbergenerator:
     build: ./NumberGenerator
     ports:
-      - "5238:5283"
+      - "8080:8080"
     environment:
-      - RABBIT_HOSTSTRING=rabbitmq:5672
+      - RABBIT_HOST=rabbitmq
       - RABBIT_USER=${RABBIT_USER}
       - RABBIT_PASS=${RABBIT_PASS}
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+    healthcheck:
+      test: curl --fail http://localhost:8080/health
+      interval: 30s
+      timeout: 10s
+      retries: 2
+      start_period: 10s
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
   rabbitmq:
-    image: "rabbitmq:4-management"
+    image: "rabbitmq:management-alpine"
     ports:
       - "5672:5672"
       - "15672:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBIT_USER}
       - RABBITMQ_DEFAULT_PASS=${RABBIT_PASS}
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 2
+      start_period: 10s

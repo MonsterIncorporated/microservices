@@ -12,6 +12,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<NumberService>();
 builder.Services.AddSingleton<MqHelperService>();
 
+builder.Services.AddTransient<HealthService>();
+
 builder.Services.AddHostedService<RabbitMqService>();
 
 var app = builder.Build();

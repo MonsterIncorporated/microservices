@@ -11,15 +11,15 @@ public class RabbitMqService(NumberService numberService, ILogger<RabbitMqServic
     {   
         var user = configuration.GetValue<string>("RABBIT_USER");
         var pass = configuration.GetValue<string>("RABBIT_PASS");
-        var host_string = configuration.GetValue<string>("RABBIT_HOSTSTRING");
+        var host = configuration.GetValue<string>("RABBIT_HOST");
 
-        if (user == null || pass == null || host_string == null)
+        if (user == null || pass == null || host == null)
         {
             logger.LogError("RabbitMQ credentials are not set in environment variables.");
             return;
         }
 
-        consumer = await mqHelperService.StartAsync("numbergenerator", host_string, user, pass);
+        consumer = await mqHelperService.StartAsync("numbergenerator", host, user, pass);
         consumer.ReceivedAsync += async (ch, ea) => await HandleMessage(ch,ea);
     }
 

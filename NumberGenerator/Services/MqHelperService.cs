@@ -12,6 +12,24 @@ public class MqHelperService(ILogger<MqHelperService> logger)
     private AsyncEventingBasicConsumer? consumer;
 
     /**
+    * Checks the health of the RabbitMQ service by verifying the status of the channel, connection, and consumer.
+    * @return A boolean value indicating whether the RabbitMQ service is healthy (true) or not (false).
+    */
+    public bool IsOk()
+    {
+        if (channel != null && channel.IsOpen && connection != null && connection.IsOpen && consumer != null)
+        {
+            logger.LogInformation("{id}: RabbitMQ service is healthy", id);
+            return true;
+        }
+        else
+        {
+            logger.LogError("{id}: RabbitMQ service is not healthy. Channel open: {channelOpen}, Connection open: {connectionOpen}, Consumer initialized: {consumerInitialized}", id, channel?.IsOpen, connection?.IsOpen, consumer != null);
+            return false;
+        }
+    }
+
+    /**
     * Starts the RabbitMQ service by establishing a connection to the RabbitMQ server, creating a channel, and setting up a consumer for the specified queue.
     * @param queueName The name of the RabbitMQ queue to consume messages from.
     * @param hostname The hostname of the RabbitMQ server to connect to.
