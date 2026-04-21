@@ -12,6 +12,7 @@ services:
       - RABBIT_USER=${RABBIT_USER}
       - RABBIT_PASS=${RABBIT_PASS}
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ALLOWED_ORIGIN_STRING=${ALLOWED_ORIGIN_STRING}
     healthcheck:
       test: curl --fail http://localhost:8080/health
       interval: 30s

@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { Connection } from 'rabbitmq-client';
-import { RabbitMQSender } from '../../rabbitmq/send';
+import { NumberGeneratorService } from '../../services/number-generator.service';
 
 @Component({
   selector: 'app-overview',
@@ -9,9 +8,10 @@ import { RabbitMQSender } from '../../rabbitmq/send';
   styleUrl: './overview.css',
 })
 export class Overview {
-  public constructor(private readonly rabbitMqService: RabbitMQSender) {}
+  public constructor(private readonly numberGeneratoService: NumberGeneratorService) {}
 
-  protected getNumber() {
-    this.rabbitMqService.sendMesage();
+  protected async getNumber() {
+    var numbers = await this.numberGeneratoService.getAsync();
+    console.log(numbers);
   }
 }

@@ -2,9 +2,24 @@ using NumberGenerator.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var AllowedOrigin = "originAllowed";
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: AllowedOrigin,
+    builder =>
+    {
+        var originString = Environment.GetEnvironmentVariable("ALLOWED_ORIGIN_STRING");
+        if (originString == null)
+        {
+            throw new InvalidOperationException("ALLOWED_ORIGIN_STRING environment variable is not set.");
+        }
+        builder.WithOrigins(originString).AllowAnyHeader().AllowAnyMethod();
+    });
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -21,6 +36,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseCors(AllowedOrigin);
     app.UseSwagger();
     app.UseSwaggerUI();
 
