@@ -7,8 +7,9 @@ namespace NumberGenerator.Controllers;
 public class NumberController : ControllerBase
 {
     [HttpGet]
-    public int Get()
+    public int Get(int min, int max)
     {
-        return 67;
+        var random = new Random().Next(min, max + 1);
+        return random;
     }
 }
