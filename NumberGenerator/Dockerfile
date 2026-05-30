@@ -1,5 +1,5 @@
 # https://hub.docker.com/_/microsoft-dotnet
-FROM dhi.io/dotnet:10-sdk-alpine3.23 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine3.23 AS build
 WORKDIR /src
 
 # copy csproj and restore as distinct layers
