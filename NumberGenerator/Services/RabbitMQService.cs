@@ -4,7 +4,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 namespace NumberGenerator.Services;
 
-public class RabbitMqService(NumberService numberService, ILogger<RabbitMqService> logger, MqHelperService mqHelperService, IConfiguration configuration) : IHostedService
+public class RabbitMqService(ILogger<RabbitMqService> logger, MqHelperService mqHelperService, IConfiguration configuration) : IHostedService
 {
     private AsyncEventingBasicConsumer? consumer;
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -94,7 +94,7 @@ public class RabbitMqService(NumberService numberService, ILogger<RabbitMqServic
         switch (type)
         {
             case "get":
-                numberService.GetNumber();
+                //await numberService.GetNumbers(Guid.Parse(message));
                 return true;
             default:
                 logger.LogError("tId_{id}: Unknown message type: {type}", id, type);

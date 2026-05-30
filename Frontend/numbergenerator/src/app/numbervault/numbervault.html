@@ -1,10 +1,39 @@
-<app-navbar-component/>
+<app-navbar-component />
 <div class="container mt-5">
   <div class="row">
-    <div class="col">
-        <button class="btn btn-primary" (click)="getNumber()">Show them numbers</button>
-        <app-numberfield-component [number]="number ?? 0000"></app-numberfield-component>
+    <div class="col border p-4">
+      <div>
+        <div class="mt-5 pb-5 d-flex flex-column align-items-center gap-3">
+          @if (loadingNumber) {
+            <h2>Generating...</h2>
+            <app-numberfield-component [number]="randomNumber()"></app-numberfield-component>
+          } @else {
+            <button class="btn btn-primary" (click)="postAsync()">
+              Generate a new Number for {{ amount }} Tokens!
+            </button>
+            <app-numberfield-component [number]="number ?? 0000"></app-numberfield-component>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col mt-5">
+      @if (numbers != null && numbers().length > 0) {
+        @for (generatedNumber of numbers(); track generatedNumber.id) {
+          <div
+            class="border-start border-end d-flex align-items-center justify-content-between gap-4 mb-2 p-4"
+          >
+            <p class="m-0">{{ generatedNumber.generatedAt.split('T')[0] }}</p>
+            <app-numberfield-component [number]="generatedNumber.value"></app-numberfield-component>
+            <button (click)="deleteNumberAsync(generatedNumber.id)" class="btn btn-danger">
+              delete
+            </button>
+          </div>
+        }
+      } @else {
+        <p class="text-center p-3">No numbers generated yet.</p>
+      }
     </div>
   </div>
 </div>
-
