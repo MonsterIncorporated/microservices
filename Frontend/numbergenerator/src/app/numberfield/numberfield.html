@@ -1,12 +1,9 @@
 <div class="container d-flex justify-content-center">
-    <div class="d-flex gap-2">
-    @for(digit of number.toString(); track $index) {
-    <div class="p-3 border border-1">
+  <div class="d-flex gap-2">
+    @for (digit of numberstring; track $index) {
+      <div class="p-3 pb-2 border-bottom border-3">
         <h3 class="m-0 ps-2 pe-2 roboto-mono">{{ digit }}</h3>
-    </div>
+      </div>
     }
-    </div>
+  </div>
 </div>
-
-
-

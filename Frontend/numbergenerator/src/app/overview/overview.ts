@@ -11,7 +11,7 @@ import { interval } from 'rxjs';
 })
 export class Overview implements OnInit {
   protected index = signal(0);
-  protected overviewNumbers = [6456, 5329, 1781, 2194, 9872, 3947];
+  protected overviewNumbers = ['6456', '5329', '1781', '2194', '9872', '3947'];
 
   ngOnInit(): void {
     interval(200).subscribe(() => {

@@ -7,5 +7,5 @@ import { Component, Input } from '@angular/core';
   styleUrl: './numberfield.css',
 })
 export class NumberfieldComponent {
-  @Input({required: true}) number: number = 0;
+  @Input({ required: true }) numberstring: string = '0';
 }

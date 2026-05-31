@@ -1,19 +1,57 @@
 <app-navbar-component />
 <div class="container mt-5">
   <div class="row">
+    <div class="col shadow bg-body-secondary">
+      <div class="row shadow mb-4">
+        <div class="d-flex justify-content-between p-3">
+          <p class="m-0">Tokens: 1678</p>
+          <p class="m-0">Cost: 567</p>
+        </div>
+      </div>
+      <div class="d-flex flex-column align-items-center gap-3 mb-5">
+        <app-numberfield-component [numberstring]="randomNumber()"></app-numberfield-component>
+        <div class="mt-2">
+          @if (loadingNumber) {
+            <button class="btn btn-light" disabled>Generating</button>
+          } @else {
+            <button class="btn btn-light" (click)="postAsync()">Generate</button>
+          }
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="d-flex p-3 w-25 gap-3">
+          <label for="digits">Digits:</label>
+          <input
+            type="number"
+            [formField]="numbergeneratorForm.digits"
+            (change)="setRandomNumber()"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container mt-5">
+  <div class="row">
     <div class="col border p-4">
       <div>
         <div class="mt-5 pb-5 d-flex flex-column align-items-center gap-3">
           @if (loadingNumber) {
             <h2>Generating...</h2>
-            <app-numberfield-component [number]="randomNumber()"></app-numberfield-component>
+            <app-numberfield-component [numberstring]="randomNumber()"></app-numberfield-component>
           } @else {
-            <button class="btn btn-primary" (click)="postAsync()">
-              Generate a new Number for {{ amount }} Tokens!
-            </button>
-            <app-numberfield-component [number]="number()"></app-numberfield-component>
-            <label for="digits">Digits:</label>
-            <input type="number" [formField]="numbergeneratorForm.digits">
+            <div class="d-flex gap-4">
+              <button class="btn btn-primary" (click)="postAsync()">
+                Generate a new Number for {{ amount }} Tokens!
+              </button>
+              <div class="d-flex">
+                <label for="digits">Digits:</label>
+                <input type="number" [formField]="numbergeneratorForm.digits" />
+              </div>
+            </div>
+            <app-numberfield-component
+              [numberstring]="number().toString()"
+            ></app-numberfield-component>
           }
         </div>
       </div>
@@ -27,7 +65,9 @@
             class="border-start border-end d-flex align-items-center justify-content-between gap-4 mb-2 p-4"
           >
             <p class="m-0">{{ generatedNumber.generatedAt.split('T')[0] }}</p>
-            <app-numberfield-component [number]="generatedNumber.value"></app-numberfield-component>
+            <app-numberfield-component
+              [numberstring]="generatedNumber.value.toString()"
+            ></app-numberfield-component>
             <button (click)="deleteNumberAsync(generatedNumber.id)" class="btn btn-danger">
               delete
             </button>
