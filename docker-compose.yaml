@@ -14,6 +14,9 @@ services:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
       - ALLOWED_ORIGIN_STRING=${ALLOWED_ORIGIN_STRING}
       - DB_CONNECTION_STRING_NUMBERGENERATOR=${DB_CONNECTION_STRING_NUMBERGENERATOR}
+      - OPENID_AUTHORITY=${OPENID_AUTHORITY}
+      - OPENID_CLIENT_ID=${OPENID_CLIENT_ID}
+      - OPENID_CLIENT_SECRET=${OPENID_CLIENT_SECRET}
     healthcheck:
       test: curl --fail http://localhost:8080/health
       interval: 30s
@@ -72,3 +75,12 @@ services:
     image: grafana/loki:latest
     ports:
       - "3100:3100"
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.6.2
+    command: start-dev
+    ports:
+      - "8081:8080"
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_USER}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_PASS}

@@ -1,4 +1,10 @@
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.OpenApi;
 using NumberGenerator.Services;
 using Serilog;
 using Serilog.Sinks.Grafana.Loki;
@@ -47,7 +53,35 @@ builder.Host.UseSerilog((context, config) =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    var authority = Environment.GetEnvironmentVariable("OPENID_AUTHORITY");
+    var clientId = Environment.GetEnvironmentVariable("OPENID_CLIENT_ID");
+    var clientSecret = Environment.GetEnvironmentVariable("OPENID_CLIENT_SECRET");
+    options.AddSecurityDefinition("Keycloak", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.OAuth2,
+        Flows = new OpenApiOAuthFlows
+        {
+            AuthorizationCode = new OpenApiOAuthFlow
+            {
+                
+                AuthorizationUrl = new Uri($"{authority}/protocol/openid-connect/auth"),
+                TokenUrl = new Uri($"{authority}/protocol/openid-connect/token"),
+                Scopes = new Dictionary<string, string>
+                {
+                    { "openid", "OpenID" },
+                    { "profile", "Profile" }
+                }
+            }
+        }
+    });
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference("Keycloak", document)] =
+            new List<String>{ "openid", "profile" }
+    });
+});
 
 builder.Services.AddSingleton<MqHelperService>();
 
@@ -60,6 +94,42 @@ builder.Services.AddDbContext<AppDbContext>((options) =>
 {
     var dbConnectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING_NUMBERGENERATOR") ?? "Host=localhost;Port=5432;Database=numbergenerator;Username=postgres;Password=DEIN_PASSWORT";
     options.UseNpgsql(dbConnectionString);
+});
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddOpenIdConnect(options =>
+{
+    var authority = Environment.GetEnvironmentVariable("OPENID_AUTHORITY");
+    var clientId = Environment.GetEnvironmentVariable("OPENID_CLIENT_ID");
+    var clientSecret = Environment.GetEnvironmentVariable("OPENID_CLIENT_SECRET");
+
+    if (authority == null || clientId == null || clientSecret == null)
+    {
+        throw new InvalidOperationException("OpenID Connect configuration environment variables are not set properly.");
+    }
+
+    if (builder.Environment.IsDevelopment())
+    {
+        options.RequireHttpsMetadata= false;
+    }
+    options.Authority = authority;
+    options.ClientId = clientId;
+    options.ClientSecret = clientSecret;
+
+    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.ResponseType = OpenIdConnectResponseType.Code;
+
+    options.SaveTokens = true;
+    options.GetClaimsFromUserInfoEndpoint = true;
+
+    options.MapInboundClaims = false;
+    options.TokenValidationParameters.NameClaimType = JwtRegisteredClaimNames.Name;
+    options.TokenValidationParameters.RoleClaimType = "roles";
 });
 
 var app = builder.Build();
@@ -76,6 +146,8 @@ if (app.Environment.IsDevelopment())
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
         options.RoutePrefix = string.Empty;
+        options.OAuthClientId(Environment.GetEnvironmentVariable("OPENID_CLIENT_ID"));
+        options.OAuthUsePkce();
     });
 }
 
@@ -84,6 +156,9 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 }
+app.UseRouting();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

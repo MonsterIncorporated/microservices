@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
+
 public class HealthService(ILogger<HealthService> logger)
 {
     public async Task<bool> GetHealthAsync()
