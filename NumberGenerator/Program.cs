@@ -43,7 +43,6 @@ builder.Host.UseSerilog((context, config) =>
             labels: new[]
             {
                 new LokiLabel { Key = "app", Value = "numbergenerator-api" },
-                new LokiLabel { Key = "env", Value = "dev" }
             });
 });
 
