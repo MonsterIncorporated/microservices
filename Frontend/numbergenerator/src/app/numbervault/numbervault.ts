@@ -21,7 +21,7 @@ export class NumbervaultComponent implements OnInit {
     );
   }
   protected amount = 12;
-  protected randomNumber = signal('0');
+  protected randomNumber = signal('?????');
   protected loadingNumber = false;
   protected numbers = signal<GeneratedNumberDto[]>([]);
   protected numbergeneratorForm = form(
@@ -64,7 +64,6 @@ export class NumbervaultComponent implements OnInit {
       min: Math.pow(10, this.numbergeneratorForm().controlValue().digits - 1),
       max: Math.pow(10, this.numbergeneratorForm().controlValue().digits) - 1,
     } as CreateGeneratedNumberDto);
-    //this.number = generatedNumberDto.value;
 
     await this.delay(1000);
 
