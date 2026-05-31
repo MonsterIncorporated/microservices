@@ -1,13 +1,9 @@
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.OpenApi;
 using NumberGenerator.Services;
 using Serilog;
 using Serilog.Sinks.Grafana.Loki;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +32,6 @@ builder.Logging.AddSerilog(new LoggerConfiguration()
                                 .Enrich.FromLogContext()
                                 .WriteTo.Console()
                                 .CreateLogger());
-
 
 builder.Host.UseSerilog((context, config) =>
 {
@@ -96,41 +91,22 @@ builder.Services.AddDbContext<AppDbContext>((options) =>
     options.UseNpgsql(dbConnectionString);
 });
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-})
-.AddCookie()
-.AddOpenIdConnect(options =>
-{
-    var authority = Environment.GetEnvironmentVariable("OPENID_AUTHORITY");
-    var clientId = Environment.GetEnvironmentVariable("OPENID_CLIENT_ID");
-    var clientSecret = Environment.GetEnvironmentVariable("OPENID_CLIENT_SECRET");
-
-    if (authority == null || clientId == null || clientSecret == null)
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        throw new InvalidOperationException("OpenID Connect configuration environment variables are not set properly.");
-    }
+        var authority = Environment.GetEnvironmentVariable("OPENID_AUTHORITY_PRIVATE");
 
-    if (builder.Environment.IsDevelopment())
-    {
-        options.RequireHttpsMetadata= false;
-    }
-    options.Authority = authority;
-    options.ClientId = clientId;
-    options.ClientSecret = clientSecret;
+        if (authority == null)
+        {
+            throw new InvalidOperationException("OPENID_AUTHORITY is not set.");
+        }
 
-    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.ResponseType = OpenIdConnectResponseType.Code;
+        options.Authority = authority;
+        options.RequireHttpsMetadata = false;
 
-    options.SaveTokens = true;
-    options.GetClaimsFromUserInfoEndpoint = true;
-
-    options.MapInboundClaims = false;
-    options.TokenValidationParameters.NameClaimType = JwtRegisteredClaimNames.Name;
-    options.TokenValidationParameters.RoleClaimType = "roles";
-});
+        options.TokenValidationParameters.ValidIssuer = Environment.GetEnvironmentVariable("OPENID_AUTHORITY");
+        options.TokenValidationParameters.ValidAudience = "numbergenerator-api-swagger";
+    });
 
 var app = builder.Build();
 
@@ -140,7 +116,6 @@ app.UseCors(AllowedOrigin);
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
 
     app.UseSwaggerUI(options =>
     {

@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace NumberGenerator.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class NumberController(INumberService numberService) : ControllerBase
 {
     [HttpGet]

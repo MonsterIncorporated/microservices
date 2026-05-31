@@ -15,6 +15,7 @@ services:
       - ALLOWED_ORIGIN_STRING=${ALLOWED_ORIGIN_STRING}
       - DB_CONNECTION_STRING_NUMBERGENERATOR=${DB_CONNECTION_STRING_NUMBERGENERATOR}
       - OPENID_AUTHORITY=${OPENID_AUTHORITY}
+      - OPENID_AUTHORITY_PRIVATE=${OPENID_AUTHORITY_PRIVATE}
       - OPENID_CLIENT_ID=${OPENID_CLIENT_ID}
       - OPENID_CLIENT_SECRET=${OPENID_CLIENT_SECRET}
     healthcheck:
@@ -78,9 +79,13 @@ services:
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.6.2
-    command: start-dev
+    command: 
+      - start-dev
+      - --import-realm
     ports:
       - "8081:8080"
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_USER}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_PASS}
+    volumes:
+    - ./Keycloak/numbergenerator-realm.json:/opt/keycloak/data/import/numbergenerator-realm.json:ro
