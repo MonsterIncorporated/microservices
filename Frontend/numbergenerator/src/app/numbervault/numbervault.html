@@ -11,7 +11,9 @@
             <button class="btn btn-primary" (click)="postAsync()">
               Generate a new Number for {{ amount }} Tokens!
             </button>
-            <app-numberfield-component [number]="number ?? 0000"></app-numberfield-component>
+            <app-numberfield-component [number]="number()"></app-numberfield-component>
+            <label for="digits">Digits:</label>
+            <input type="number" [formField]="numbergeneratorForm.digits">
           }
         </div>
       </div>
