@@ -7,6 +7,26 @@
   "panels": [
     {
       "type": "logs",
+      "title": "HealthService Logs",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 12
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "expr": "{app=\"numbergenerator-api\"} | json | SourceContext = \"HealthService\" | line_format \"{{ date \\\"02.01.2006 15:04:05\\\" __timestamp__ }} {{.Message}}\"",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "logs",
       "title": "NumberService Logs",
       "gridPos": {
         "x": 0,
@@ -25,9 +45,9 @@
         }
       ]
     },
-        {
+    {
       "type": "logs",
-      "title": "HealthService Logs",
+      "title": "RabbitMQService Logs",
       "gridPos": {
         "x": 0,
         "y": 0,
@@ -40,7 +60,27 @@
             "type": "loki",
             "uid": "Loki"
           },
-          "expr": "{app=\"numbergenerator-api\"} | json | SourceContext = \"HealthService\" | line_format \"{{ date \\\"02.01.2006 15:04:05\\\" __timestamp__ }} {{.Message}}\"",
+          "expr": "{app=\"numbergenerator-api\"} | json | SourceContext = \"NumberGenerator.Services.RabbitMqService\" | line_format \"{{ date \\\"02.01.2006 15:04:05\\\" __timestamp__ }} {{.Message}}\"",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "logs",
+      "title": "RabbitMQHelperService Logs",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 12
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "expr": "{app=\"numbergenerator-api\"} | json | SourceContext = \"NumberGenerator.Services.MqHelperService\" | line_format \"{{ date \\\"02.01.2006 15:04:05\\\" __timestamp__ }} {{.Message}}\"",
           "refId": "A"
         }
       ]

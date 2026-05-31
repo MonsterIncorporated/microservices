@@ -9,6 +9,7 @@ public class RabbitMqService(ILogger<RabbitMqService> logger, MqHelperService mq
     private AsyncEventingBasicConsumer? consumer;
     public async Task StartAsync(CancellationToken cancellationToken)
     {   
+        logger.LogInformation("Starting RabbitMQService");
         var user = configuration.GetValue<string>("RABBIT_USER");
         var pass = configuration.GetValue<string>("RABBIT_PASS");
         var host = configuration.GetValue<string>("RABBIT_HOST");
@@ -21,6 +22,8 @@ public class RabbitMqService(ILogger<RabbitMqService> logger, MqHelperService mq
 
         consumer = await mqHelperService.StartAsync("numbergenerator", host, user, pass);
         consumer.ReceivedAsync += async (ch, ea) => await HandleMessage(ch,ea);
+
+        logger.LogInformation("Started RabbitMQService");
     }
 
     /**
@@ -29,7 +32,9 @@ public class RabbitMqService(ILogger<RabbitMqService> logger, MqHelperService mq
     */
     public async Task StopAsync(CancellationToken cancellationToken)
     {
+        logger.LogInformation("Stopping RabbitMQService");
         await mqHelperService.StopAsync();
+        logger.LogInformation("Stopped RabbitMQService");
     }
 
     private async Task HandleMessage(Object? ch, BasicDeliverEventArgs eventArgs)

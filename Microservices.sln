@@ -26,18 +26,6 @@ Global
 		{D445A677-0E93-9F7F-B350-16A0C5B46DC4}.Release|x64.Build.0 = Release|Any CPU
 		{D445A677-0E93-9F7F-B350-16A0C5B46DC4}.Release|x86.ActiveCfg = Release|Any CPU
 		{D445A677-0E93-9F7F-B350-16A0C5B46DC4}.Release|x86.Build.0 = Release|Any CPU
-		{CEC17733-933F-43F5-9071-8920EC8DF4FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CEC17733-933F-43F5-9071-8920EC8DF4FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CEC17733-933F-43F5-9071-8920EC8DF4FB}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{CEC17733-933F-43F5-9071-8920EC8DF4FB}.Debug|x64.Build.0 = Debug|Any CPU
-		{CEC17733-933F-43F5-9071-8920EC8DF4FB}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{CEC17733-933F-43F5-9071-8920EC8DF4FB}.Debug|x86.Build.0 = Debug|Any CPU
-		{CEC17733-933F-43F5-9071-8920EC8DF4FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CEC17733-933F-43F5-9071-8920EC8DF4FB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CEC17733-933F-43F5-9071-8920EC8DF4FB}.Release|x64.ActiveCfg = Release|Any CPU
-		{CEC17733-933F-43F5-9071-8920EC8DF4FB}.Release|x64.Build.0 = Release|Any CPU
-		{CEC17733-933F-43F5-9071-8920EC8DF4FB}.Release|x86.ActiveCfg = Release|Any CPU
-		{CEC17733-933F-43F5-9071-8920EC8DF4FB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
