@@ -33,14 +33,13 @@
 </div>
 <div class="container mt-5">
   <div class="row">
-        <div class="col shadow bg-body-secondary">
+    <div class="col shadow bg-body-secondary">
       <div class="row shadow mb-4">
         <div class="d-flex justify-content-between p-3">
           <p class="m-0">History</p>
         </div>
-
       </div>
-              @if (numbers != null && numbers().length > 0) {
+      @if (numbers != null && numbers().length > 0) {
         @for (generatedNumber of numbers(); track generatedNumber.id) {
           <div
             class="border-start border-end d-flex align-items-center justify-content-between gap-4 mb-2 p-4"
@@ -57,6 +56,6 @@
       } @else {
         <p class="text-center p-3">No numbers generated yet.</p>
       }
-      </div>
+    </div>
   </div>
 </div>
