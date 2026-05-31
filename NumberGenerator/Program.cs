@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using NumberGenerator.Services;
+using Serilog;
+using Serilog.Sinks.Grafana.Loki;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,29 @@ builder.Services.AddCors(options =>
         }
         builder.WithOrigins(originString).AllowAnyHeader().AllowAnyMethod();
     });
+});
+
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(new LoggerConfiguration()
+                                .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Information)
+                                .Enrich.FromLogContext()
+                                .WriteTo.Console()
+                                .CreateLogger());
+
+
+builder.Host.UseSerilog((context, config) =>
+{
+    config
+        .Enrich.FromLogContext()
+        .Enrich.WithProperty("app", "numbergenerator-api")
+        .WriteTo.Console()
+        .WriteTo.GrafanaLoki(
+            "http://loki:3100",
+            labels: new[]
+            {
+                new LokiLabel { Key = "app", Value = "numbergenerator-api" },
+                new LokiLabel { Key = "env", Value = "dev" }
+            });
 });
 
 builder.Services.AddEndpointsApiExplorer();

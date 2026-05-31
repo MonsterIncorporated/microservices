@@ -55,3 +55,15 @@ services:
       timeout: 10s
       retries: 2
       start_period: 10s
+  
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
