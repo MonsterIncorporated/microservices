@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 public class NumberService(ILogger<NumberService> logger, AppDbContext dbContext) : INumberService

@@ -39,6 +39,7 @@ export class AuthService {
     await this.keycloak.updateToken(30);
     return this.keycloak.token;
   }
+
   getUserId(): string | undefined {
     return this.keycloak.tokenParsed?.sub;
  }
