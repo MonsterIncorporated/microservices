@@ -5,6 +5,7 @@ import { NumberfieldComponent } from '../numberfield/numberfield';
 import { GeneratedNumberDto } from '../../dtos/generated-number.dto';
 import { CreateGeneratedNumberDto } from '../../dtos/create-generated-number.dto';
 import { form, FormField, max, min } from '@angular/forms/signals';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-numbervault-component',
@@ -38,7 +39,7 @@ export class NumbervaultComponent implements OnInit {
     return Math.pow(10, this.numbergeneratorForm().controlValue().digits) - 1;
   }
 
-  public constructor(private readonly numberGeneratoService: NumberGeneratorService) {}
+  public constructor(private readonly numberGeneratoService: NumberGeneratorService, private readonly authService: AuthService) {}
 
   ngOnInit(): void {
     this.getNumbersAsync();
@@ -51,7 +52,7 @@ export class NumbervaultComponent implements OnInit {
 
   private async getNumbersAsync() {
     this.numbers.set(
-      await this.numberGeneratoService.getNumbersAsync('123e4567-e89b-12d3-a456-426655440000'),
+      await this.numberGeneratoService.getNumbersAsync(this.authService.getUserId()!),
     );
   }
 
@@ -59,8 +60,10 @@ export class NumbervaultComponent implements OnInit {
     this.loadingNumber = true;
     var intervalId = this.startRandomNumberAnimation();
 
+    const userId = this.authService.getUserId();
+
     var generatedNumberDto = await this.numberGeneratoService.postAsync({
-      userId: '123e4567-e89b-12d3-a456-426655440000',
+      userId: userId,
       min: Math.pow(10, this.numbergeneratorForm().controlValue().digits - 1),
       max: Math.pow(10, this.numbergeneratorForm().controlValue().digits) - 1,
     } as CreateGeneratedNumberDto);

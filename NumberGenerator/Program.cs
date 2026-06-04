@@ -105,7 +105,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.RequireHttpsMetadata = false;
 
         options.TokenValidationParameters.ValidIssuer = Environment.GetEnvironmentVariable("OPENID_AUTHORITY");
-        options.TokenValidationParameters.ValidAudience = "numbergenerator-api-swagger";
+        options.TokenValidationParameters.ValidAudiences = new [] { "numbergenerator-api-swagger", "numbergenerator-api-frontend" };
     });
 
 var app = builder.Build();
