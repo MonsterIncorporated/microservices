@@ -44,6 +44,15 @@ services:
       timeout: 10s
       retries: 2
       start_period: 10s
+  
+  mariadb:
+    image: mariadb
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: tokens
+    ports:
+      - "3306:3306"
 
   rabbitmq:
     image: "rabbitmq:management-alpine"
