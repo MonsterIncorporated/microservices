@@ -3,9 +3,14 @@ import { authGuard } from '../auth/auth.guard';
 
 export const routes: Routes = [
   {
+    path: 'profile',
+    loadComponent: () => import('./profile/profile').then((m) => m.ProfileComponent),
+    canActivate: [authGuard],
+  },
+  {
     path: 'numbers',
     loadComponent: () => import('./numbervault/numbervault').then((m) => m.NumbervaultComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
   },
   {
     path: '',

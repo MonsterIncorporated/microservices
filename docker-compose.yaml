@@ -44,10 +44,11 @@ services:
       timeout: 10s
       retries: 2
       start_period: 10s
-  
+
   mariadb:
     image: mariadb
     environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "true"
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: tokens
@@ -88,7 +89,7 @@ services:
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.6.2
-    command: 
+    command:
       - start-dev
       - --import-realm
     ports:
@@ -97,4 +98,4 @@ services:
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_USER}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_PASS}
     volumes:
-    - ./Keycloak/numbergenerator-realm.json:/opt/keycloak/data/import/numbergenerator-realm.json:ro
+      - ./Keycloak/numbergenerator-realm.json:/opt/keycloak/data/import/numbergenerator-realm.json:ro

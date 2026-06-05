@@ -1,0 +1,9 @@
+<app-navbar-component />
+<div class="container mt-5">
+  <div class="row">
+    @if (user != null) {
+      <p>Welcome {{ user.preferred_username }}</p>
+      <button (click)="logout()">Logout</button>
+    }
+  </div>
+</div>
