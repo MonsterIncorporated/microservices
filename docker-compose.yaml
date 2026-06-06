@@ -59,9 +59,9 @@ services:
     image: mariadb
     environment:
       MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "true"
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASS}
-      MYSQL_DATABASE: tokens
+      MARIADB_USER: ${MYSQL_USER}
+      MARIADB_PASSWORD: ${MYSQL_PASS}
+      MARIADB_DATABASE: tokens
     ports:
       - "3306:3306"
 

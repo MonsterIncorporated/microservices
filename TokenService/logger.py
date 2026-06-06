@@ -10,3 +10,5 @@ custom_handler = LokiHandler(
     labels={"app": "tokenservice-api"},
 )
 logger.addHandler(custom_handler)
+
+logger.info("Logger Started for Token Service")

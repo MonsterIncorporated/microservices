@@ -2,6 +2,7 @@ FROM python:3.14.5-alpine3.23
 
 WORKDIR /usr/src/app
 
+ENV PYTHONPATH=/usr/src/app
 RUN pip install --upgrade pip pipenv
 
 COPY Pipfile Pipfile.lock ./

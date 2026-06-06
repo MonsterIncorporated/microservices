@@ -4,6 +4,8 @@ from controller.walletController import router as walletRouter
 from controller.transactionController import router as transactionRouter
 from db.db import Base, engine
 
+logger.info("Starting Token Service")
+
 Base.metadata.create_all(bind=engine)
 
 api = FastAPI(docs_url="/")
