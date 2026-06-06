@@ -1,13 +1,12 @@
 from fastapi import FastAPI
+from controller.walletController import router as walletRouter
+from controller.transactionController import router as transactionRouter
+from db.db import Base, engine
 
-app = FastAPI()
+Base.metadata.create_all(bind=engine)
 
+api = FastAPI(docs_url="/")
+api.title = "Token Service API"
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str | None = None):
-    return {"item_id": item_id, "q": q}
+api.include_router(walletRouter)
+api.include_router(transactionRouter)

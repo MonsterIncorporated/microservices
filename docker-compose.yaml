@@ -45,12 +45,21 @@ services:
       retries: 2
       start_period: 10s
 
+  token_service:
+    build: ./TokenService
+    ports:
+      - "8082:8080"
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASS=${MYSQL_PASS}
+      - MYSQL_HOST=${MYSQL_HOST}
+
   mariadb:
     image: mariadb
     environment:
       MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "true"
       MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_PASSWORD: ${MYSQL_PASS}
       MYSQL_DATABASE: tokens
     ports:
       - "3306:3306"
