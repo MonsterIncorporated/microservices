@@ -53,6 +53,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASS=${MYSQL_PASS}
       - MYSQL_HOST=${MYSQL_HOST}
+      - LOKI_URL=${LOKI_URL}
 
   mariadb:
     image: mariadb
