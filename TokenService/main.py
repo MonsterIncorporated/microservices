@@ -4,7 +4,7 @@ from controller.walletController import router as walletRouter
 from controller.transactionController import router as transactionRouter
 from db.db import Base, engine
 
-logger.info("Starting Token Service")
+logger.info("Starting Token Service", extra={"filetype": "startup"})
 
 Base.metadata.create_all(bind=engine)
 
@@ -14,4 +14,4 @@ api.title = "Token Service API"
 api.include_router(walletRouter)
 api.include_router(transactionRouter)
 
-logger.info("Token Service started")
+logger.info("Token Service started", extra={"filetype": "startup"})
