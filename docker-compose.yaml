@@ -54,6 +54,7 @@ services:
       - MYSQL_PASS=${MYSQL_PASS}
       - MYSQL_HOST=${MYSQL_HOST}
       - LOKI_URL=${LOKI_URL}
+      - OPENID_AUTHORITY=${OPENID_AUTHORITY}
 
   mariadb:
     image: mariadb

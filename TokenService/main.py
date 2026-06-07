@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI
 from logger import logger
 from controller.walletController import router as walletRouter
@@ -8,7 +10,11 @@ logger.info("Starting Token Service", extra={"filetype": "startup"})
 
 Base.metadata.create_all(bind=engine)
 
-api = FastAPI(docs_url="/")
+api = FastAPI(docs_url="/",swagger_ui_oauth2_redirect_url="/oauth2-redirect", swagger_ui_init_oauth={
+    "clientId": "tokenservice-api-swagger",
+    "usePkceWithAuthorizationCodeGrant": True
+})
+
 api.title = "Token Service API"
 
 api.include_router(walletRouter)

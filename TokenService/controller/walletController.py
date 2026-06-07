@@ -1,4 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from typing import Annotated
+from oauth import oauth2_scheme
+from fastapi import APIRouter, Depends, HTTPException
 from logger import logger
 from dtos.success import SuccessDto
 from dtos.error import ErrorDto
@@ -8,7 +10,7 @@ from services.walletService import WalletService
 router = APIRouter(prefix="/wallet", tags=["wallet"])
 
 @router.get("/", response_model=WalletDto, responses={404: {"model": ErrorDto}})
-def get_wallet(userId: str):
+def get_wallet(userId: str, token: Annotated[str, Depends(oauth2_scheme)]):
     logger.info("Getting wallet with userId: " + userId, extra={"filetype": "walletController"})
     wallet = WalletService.get_wallet(userId)
     if(wallet == None):
@@ -22,7 +24,7 @@ def get_wallet(userId: str):
     return wallet
 
 @router.post("/", response_model=WalletDto)
-def create_wallet(userId: str):
+def create_wallet(userId: str, token: Annotated[str, Depends(oauth2_scheme)]):
     logger.info("Creating wallet with userId: " + userId, extra={"filetype": "walletController"})
     wallet = WalletService.create_wallet(userId)
 
@@ -30,7 +32,7 @@ def create_wallet(userId: str):
     return wallet
 
 @router.put("/", response_model=WalletDto, responses={404: {"model": ErrorDto}})
-def update_wallet(wallet: WalletDto):
+def update_wallet(wallet: WalletDto, token: Annotated[str, Depends(oauth2_scheme)]):
     logger.info("Updating wallet with userId: " + wallet.userId, extra={"filetype": "walletController"})
     walletDto = WalletService.update_wallet(wallet)
     if(walletDto == None):
@@ -44,7 +46,7 @@ def update_wallet(wallet: WalletDto):
     return walletDto
 
 @router.delete("/", responses={404: {"model": ErrorDto}, 201: {"model": SuccessDto}})
-def delete_wallet(userId: str):
+def delete_wallet(userId: str, token: Annotated[str, Depends(oauth2_scheme)]):
     logger.info("Deleting wallet with userId: " + userId, extra={"filetype": "walletController"})
     result = WalletService.delete_wallet(userId)
     if(result == None):
