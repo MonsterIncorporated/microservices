@@ -6,8 +6,10 @@ import { GeneratedNumberDto } from '../../dtos/generated-number.dto';
 import { CreateGeneratedNumberDto } from '../../dtos/create-generated-number.dto';
 import { form, FormField, max, min } from '@angular/forms/signals';
 import { AuthService } from '../../services/auth.service';
-import { WalletService } from '../../services/token.service';
+import { WalletService } from '../../services/wallet.service';
 import { WalletDto } from '../../dtos/wallet.dto';
+import { TransactionService } from '../../services/transaction.service';
+import { CreateTransactionDto, TransactionStatus } from '../../dtos/create-transaction.dto';
 
 @Component({
   selector: 'app-numbervault-component',
@@ -46,6 +48,7 @@ export class NumbervaultComponent implements OnInit {
     private readonly numberGeneratoService: NumberGeneratorService,
     private readonly authService: AuthService,
     private readonly walletService: WalletService,
+    private readonly transactionService: TransactionService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -70,16 +73,25 @@ export class NumbervaultComponent implements OnInit {
 
     const userId = this.authService.getUserId();
 
-    var generatedNumberDto = await this.numberGeneratoService.postAsync({
+    var transaction = await this.transactionService.postAsync({
+      userId: userId!,
+      requiredTokens: this.numbergeneratorForm().controlValue().digits * 10,
+      numberOfDigits: this.numbergeneratorForm().controlValue().digits,
+      status: TransactionStatus.PENDING
+    } as CreateTransactionDto);
+
+    console.log(transaction);
+transaction
+    /*var generatedNumberDto = await this.numberGeneratoService.postAsync({
       userId: userId,
       min: Math.pow(10, this.numbergeneratorForm().controlValue().digits - 1),
       max: Math.pow(10, this.numbergeneratorForm().controlValue().digits) - 1,
-    } as CreateGeneratedNumberDto);
+    } as CreateGeneratedNumberDto);*/
 
     await this.delay(1000);
 
     await this.stopRandomNumberAnimation(intervalId);
-    this.randomNumber.set(generatedNumberDto.value.toString());
+    //this.randomNumber.set(generatedNumberDto.value.toString());
     this.loadingNumber = false;
 
     this.getNumbersAsync();

@@ -1,6 +1,23 @@
 {
   "id": "94ed3988-bf5e-4630-ae5a-93cc09fcb28d",
   "realm": "numbergenerator",
+  "users": [
+    {
+      "username": "monsterluni",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Monster",
+      "lastName": "Luni",
+      "email": "monsterluni@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "12345",
+          "temporary": false
+        }
+      ]
+    }
+  ],
   "notBefore": 0,
   "defaultSignatureAlgorithm": "RS256",
   "revokeRefreshToken": false,

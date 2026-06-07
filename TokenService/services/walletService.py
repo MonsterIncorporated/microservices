@@ -7,7 +7,7 @@ class WalletService:
     def get_wallet(userId: str):
         wallet = db.query(Wallet).filter(Wallet.userId == userId).first()
         if(wallet == None):
-            return None
+            return WalletService.create_wallet(userId)
         return WalletDto.to_dto(wallet)
     
     @staticmethod

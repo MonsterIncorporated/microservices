@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar';
 import { AuthService } from '../../services/auth.service';
 import { UserDto } from '../../dtos/user';
-import { WalletService } from '../../services/token.service';
+import { WalletService } from '../../services/wallet.service';
 import { WalletDto } from '../../dtos/wallet.dto';
 
 @Component({
