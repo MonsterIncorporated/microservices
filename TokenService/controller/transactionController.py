@@ -33,6 +33,12 @@ def get_transaction_from_user(userId: str, token: Annotated[str, Depends(oauth2_
 def create_transaction(createTransactionDto: CreateTransactionDto, token: Annotated[str, Depends(oauth2_scheme)]):
     logger.info("Creating transaction with userId: " + createTransactionDto.userId, extra={"filetype": "transactionController"})
     transactionDto = TransactionService.create_transaction(createTransactionDto)
+    if transactionDto == None:
+        raise HTTPException(status_code=404, detail={
+            "name": "Not enough Money", 
+            "detail": "Transaction with: " + str(createTransactionDto.requiredTokens) + " costs too much", 
+            "ofType": "Tokens", 
+            "code": 404})
     logger.info("Transaction with userId: " + createTransactionDto.userId + " created successfully with transactionId: " + transactionDto.transactionId, extra={"filetype": "transactionController"})
     return transactionDto
 

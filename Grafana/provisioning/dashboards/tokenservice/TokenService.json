@@ -64,6 +64,26 @@
           "refId": "A"
         }
       ]
+    },
+    {
+      "type": "logs",
+      "title": "RabbitMQ Logs",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 12
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "expr": "{app=\"tokenservice-api\"} | json | filetype = \"RabbitMQ\" | line_format \"{{ date \\\"02.01.2006 15:04:05\\\" __timestamp__ }} {{.message}}\"",
+          "refId": "A"
+        }
+      ]
     }
   ]
 }

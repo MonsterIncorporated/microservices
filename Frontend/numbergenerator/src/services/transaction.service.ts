@@ -12,7 +12,10 @@ export class TransactionService {
 
   public async postAsync(createTransactionDto: CreateTransactionDto): Promise<TransactionDto> {
     return await firstValueFrom(
-      this.httpClient.post<TransactionDto>('http://localhost:8082/transaction', createTransactionDto),
+      this.httpClient.post<TransactionDto>(
+        'http://localhost:8082/transaction',
+        createTransactionDto,
+      ),
     );
   }
 }

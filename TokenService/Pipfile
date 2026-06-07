@@ -8,6 +8,7 @@ fastapi = {extras = ["standard"], version = "*"}
 sqlalchemy = "*"
 pymysql = "*"
 loki-logging-handler = "*"
+pika = "*"
 
 [dev-packages]
 

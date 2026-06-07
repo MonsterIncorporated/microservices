@@ -26,6 +26,7 @@ export class NumbervaultComponent implements OnInit {
     );
   }
   protected wallet?: WalletDto;
+  protected notEnoughTokens = false;
   protected amount = 12;
   protected randomNumber = signal('?????');
   protected loadingNumber = false;
@@ -48,7 +49,7 @@ export class NumbervaultComponent implements OnInit {
     private readonly numberGeneratoService: NumberGeneratorService,
     private readonly authService: AuthService,
     private readonly walletService: WalletService,
-    private readonly transactionService: TransactionService
+    private readonly transactionService: TransactionService,
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -68,33 +69,29 @@ export class NumbervaultComponent implements OnInit {
   }
 
   protected async postAsync() {
-    this.loadingNumber = true;
-    var intervalId = this.startRandomNumberAnimation();
+    if (this.wallet!.tokens >= this.numbergeneratorForm().controlValue().digits * 10) {
+      this.loadingNumber = true;
+      var intervalId = this.startRandomNumberAnimation();
 
-    const userId = this.authService.getUserId();
+      const userId = this.authService.getUserId();
 
-    var transaction = await this.transactionService.postAsync({
-      userId: userId!,
-      requiredTokens: this.numbergeneratorForm().controlValue().digits * 10,
-      numberOfDigits: this.numbergeneratorForm().controlValue().digits,
-      status: TransactionStatus.PENDING
-    } as CreateTransactionDto);
+      var transaction = await this.transactionService.postAsync({
+        userId: userId!,
+        requiredTokens: this.numbergeneratorForm().controlValue().digits * 10,
+        numberOfDigits: this.numbergeneratorForm().controlValue().digits,
+        status: TransactionStatus.PENDING,
+      } as CreateTransactionDto);
 
-    console.log(transaction);
-transaction
-    /*var generatedNumberDto = await this.numberGeneratoService.postAsync({
-      userId: userId,
-      min: Math.pow(10, this.numbergeneratorForm().controlValue().digits - 1),
-      max: Math.pow(10, this.numbergeneratorForm().controlValue().digits) - 1,
-    } as CreateGeneratedNumberDto);*/
+      await this.delay(1000);
 
-    await this.delay(1000);
+      await this.stopRandomNumberAnimation(intervalId);
+      //this.randomNumber.set(generatedNumberDto.value.toString());
+      this.loadingNumber = false;
 
-    await this.stopRandomNumberAnimation(intervalId);
-    //this.randomNumber.set(generatedNumberDto.value.toString());
-    this.loadingNumber = false;
-
-    this.getNumbersAsync();
+      this.getNumbersAsync();
+    } else {
+      this.notEnoughTokens = true;
+    }
   }
 
   private startRandomNumberAnimation(): number {

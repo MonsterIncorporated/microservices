@@ -37,7 +37,7 @@ public class MqHelperService(ILogger<MqHelperService> logger)
     * @param password The password for authenticating with the RabbitMQ server.
     * @return An instance of AsyncEventingBasicConsumer that can be used to handle incoming messages from the specified queue.
     */
-    public async Task<AsyncEventingBasicConsumer> StartAsync(string queueName, string hostname, string username, string password)
+    public async Task<AsyncEventingBasicConsumer> StartAsync(string queueName, string hostname, string username, string password, AsyncEventHandler<BasicDeliverEventArgs> onMessage)
     {
         logger.LogInformation("{id}: Starting RabbitMQ service and connecting to queue: {queueName} at {hostname}", id, queueName, hostname);
         var factory = new ConnectionFactory
@@ -57,10 +57,12 @@ public class MqHelperService(ILogger<MqHelperService> logger)
             arguments: new Dictionary<string, object?> { { "x-queue-type", "quorum" } });
         
         await channel.ExchangeDeclareAsync("events", ExchangeType.Direct, durable: true);
+        await channel.ExchangeDeclareAsync("success", ExchangeType.Direct, durable: true);
+        await channel.ExchangeDeclareAsync("fail", ExchangeType.Direct, durable: true);
         await channel.QueueBindAsync(queue: queueName, exchange: "events", routingKey: "token.purchased");
 
         await channel.BasicConsumeAsync(queueName, false, consumer);
-        
+        consumer.ReceivedAsync += onMessage;
 
         logger.LogInformation("{id}: RabbitMQ service started and consuming from queue: {queueName}", id, queueName);
         return consumer;

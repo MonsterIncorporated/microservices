@@ -1,3 +1,6 @@
+from dtos.wallet import WalletDto
+from services.rabbitMQService import RabbitMQService
+from services.walletService import WalletService
 from dtos.transaction import TransactionDto, CreateTransactionDto
 from db.db import db
 import uuid
@@ -19,16 +22,24 @@ class TransactionService:
     
     @staticmethod
     def create_transaction(transactionDto: CreateTransactionDto):
-        transaction = Transaction(
+        walletDto = WalletService.get_wallet(transactionDto.userId);
+
+        if(walletDto.tokens >= transactionDto.requiredTokens):
+            WalletService.update_wallet(WalletDto(userId=walletDto.userId, tokens=walletDto.tokens - transactionDto.requiredTokens));
+            transaction = Transaction(
             transactionId=str(uuid.uuid4()), 
             userId=transactionDto.userId, 
             requiredTokens=transactionDto.requiredTokens, 
             numberOfDigits=transactionDto.numberOfDigits, 
             status=transactionDto.status)
-        db.add(transaction)
-        db.commit()
-        return TransactionDto.to_dto(transaction)
-    
+            db.add(transaction)
+            db.commit()
+
+            RabbitMQService.publish_token_pruchase(TransactionDto.to_dto(transaction));
+            return TransactionDto.to_dto(transaction)
+        else:
+            return None
+        
     @staticmethod
     def update_transaction(transactionDto: TransactionDto):
         transactionFromDb = db.query(Transaction).filter(Transaction.transactionId == transactionDto.transactionId).first()
