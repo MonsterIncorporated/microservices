@@ -82,13 +82,15 @@ export class NumbervaultComponent implements OnInit {
         status: TransactionStatus.PENDING,
       } as CreateTransactionDto);
 
-      await this.delay(1000);
+      await this.delay(2000);
 
       await this.stopRandomNumberAnimation(intervalId);
       //this.randomNumber.set(generatedNumberDto.value.toString());
       this.loadingNumber = false;
 
       this.getNumbersAsync();
+      this.wallet!.tokens =
+        this.wallet!.tokens - this.numbergeneratorForm().controlValue().digits * 10;
     } else {
       this.notEnoughTokens = true;
     }
