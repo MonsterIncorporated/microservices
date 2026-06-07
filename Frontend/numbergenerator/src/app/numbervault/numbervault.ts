@@ -6,6 +6,8 @@ import { GeneratedNumberDto } from '../../dtos/generated-number.dto';
 import { CreateGeneratedNumberDto } from '../../dtos/create-generated-number.dto';
 import { form, FormField, max, min } from '@angular/forms/signals';
 import { AuthService } from '../../services/auth.service';
+import { WalletService } from '../../services/token.service';
+import { WalletDto } from '../../dtos/wallet.dto';
 
 @Component({
   selector: 'app-numbervault-component',
@@ -21,6 +23,7 @@ export class NumbervaultComponent implements OnInit {
         .replaceAll('9', '?'),
     );
   }
+  protected wallet?: WalletDto;
   protected amount = 12;
   protected randomNumber = signal('?????');
   protected loadingNumber = false;
@@ -39,9 +42,14 @@ export class NumbervaultComponent implements OnInit {
     return Math.pow(10, this.numbergeneratorForm().controlValue().digits) - 1;
   }
 
-  public constructor(private readonly numberGeneratoService: NumberGeneratorService, private readonly authService: AuthService) {}
+  public constructor(
+    private readonly numberGeneratoService: NumberGeneratorService,
+    private readonly authService: AuthService,
+    private readonly walletService: WalletService,
+  ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    this.wallet = await this.walletService.getWalletAsync(this.authService.getUserId()!);
     this.getNumbersAsync();
   }
 

@@ -2,8 +2,13 @@
 <div class="container mt-5">
   <div class="row">
     @if (user != null) {
-      <p>Welcome {{ user.preferred_username }}</p>
-      <button (click)="logout()">Logout</button>
+      <p>Welcome {{ user!.preferred_username }}</p>
     }
+    @if (wallet != null) {
+      <p>You have {{ wallet.tokens }} Tokens!</p>
+    } @else {
+      <p>Loading wallet...</p>
+    }
+    <button (click)="logout()">Logout</button>
   </div>
 </div>

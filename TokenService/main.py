@@ -1,6 +1,7 @@
 import os
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from logger import logger
 from controller.walletController import router as walletRouter
 from controller.transactionController import router as transactionRouter
@@ -14,6 +15,15 @@ api = FastAPI(docs_url="/",swagger_ui_oauth2_redirect_url="/oauth2-redirect", sw
     "clientId": "tokenservice-api-swagger",
     "usePkceWithAuthorizationCodeGrant": True
 })
+
+api.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost"
+    ],
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 api.title = "Token Service API"
 
